@@ -1,0 +1,36 @@
+#include "allocation.h"
+
+////////////////////////////////////////////////////////////////////////////////
+/// TOOLS FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+/// PUBLIC FUNCTION
+////////////////////////////////////////////////////////////////////////////////
+
+void *realloc(void *ptr, size_t size)
+{
+	if (ptr == NULL)
+	{
+		return (malloc(size));
+	}
+	if (size == 0 && ptr)
+	{
+		free(ptr);
+		return (NULL);
+	}
+	void *result;
+	size_t length;
+
+	if ((result = malloc(size)) == NULL)
+	{
+		return (ptr);
+	}
+
+	length = size + (MEMORY_ALIGN - (size + sizeof(t_meta)) % MEMORY_ALIGN);
+
+	memcpy(result, ptr, length);
+	free(ptr);
+
+	return (result);
+}
