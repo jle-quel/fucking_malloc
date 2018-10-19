@@ -24,11 +24,14 @@ LINK_NAME = libft_malloc.so
 SRC_NAME =	free.c				\
 			malloc.c			\
 			realloc.c			\
+			utils.c				\
+			new_page.c			\
+			search_page.c			\
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
 CC = clang
-CFLAGS = -g3 -fsanitize=address
+CFLAGS = 
 
 RED=\033[1;31m
 GREEN=\033[1;32m
