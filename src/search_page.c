@@ -29,7 +29,7 @@ static void *get_block(t_header *header_ptr, size_t const size)
 		meta_ptr = meta_ptr->next;
 	}
 
-	return (NULL);
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
