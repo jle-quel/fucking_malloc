@@ -4,13 +4,11 @@
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-void *get_block(t_header *header_ptr, size_t const size)
+static void *get_block(t_header *header_ptr, size_t const size)
 {
-	t_meta *meta_ptr = NULL;
+	t_meta *meta_ptr = (t_meta *)header_ptr;
 	t_meta *result = NULL;
 	void *ptr = NULL;
-
-	meta_ptr = (t_meta *)header_ptr;
 
 	while (meta_ptr)
 	{
@@ -20,7 +18,7 @@ void *get_block(t_header *header_ptr, size_t const size)
 			{
 				ptr = (void *)meta_ptr;
 				ptr += (sizeof(t_meta) + size);
-				create_meta(TRUE, (meta_ptr->size - size) - sizeof(t_meta), ptr, meta_ptr->next);
+				create_meta(TRUE, meta_ptr->size - (size + sizeof(t_meta)), ptr, meta_ptr->next);
 				meta_ptr->next = ptr;
 			}
 
@@ -40,13 +38,8 @@ void *get_block(t_header *header_ptr, size_t const size)
 
 void *search_page(const uint8_t allocation_type, const size_t size)
 {
-	t_header *header_ptr = NULL;
+	t_header *header_ptr = *arena();
 	void *result = NULL;
-
-	header_ptr = *arena();
-
-	if (allocation_type == LARGE)
-		return NULL;
 
 	while (header_ptr)
 	{

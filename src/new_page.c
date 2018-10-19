@@ -52,8 +52,8 @@ void *new_page(const uint8_t allocation_type, const size_t size)
 	}
 
 	result = ptr + sizeof(t_header);
-	next = result + sizeof(t_meta) + size;
-	rest = (((page_size - sizeof(t_meta) * 2) - sizeof(t_header)) - size);
+	next = result + (sizeof(t_meta) + size);
+	rest = page_size - (((sizeof(t_meta) * 2) + sizeof(t_header)) + size);
 
 	create_header(allocation_type, page_size, ptr);
 	create_meta(FALSE, size, result, next);
