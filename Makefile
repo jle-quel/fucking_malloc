@@ -26,8 +26,10 @@ SRC_NAME =	free.c				\
 			realloc.c			\
 			utils.c				\
 			new_page.c			\
-			search_page.c			\
-calloc.c	\
+			search_page.c		\
+			calloc.c			\
+			show_alloc_mem.c	\
+			lib.c				\
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 

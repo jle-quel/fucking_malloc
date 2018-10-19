@@ -1,31 +1,39 @@
 #include <allocation.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+/// TOOL FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+
+static inline t_meta *get_block(t_meta *meta_ptr, size_t const size)
+{
+	void *ptr = NULL;
+
+	if (meta_ptr->size >= (size + sizeof(t_meta) + MEMORY_ALIGN))
+	{
+		ptr = (void *)meta_ptr;
+		ptr += (sizeof(t_meta) + size);
+		create_meta(TRUE, meta_ptr->size - (size + sizeof(t_meta)), ptr, meta_ptr->next);
+		meta_ptr->next = ptr;
+	}
+
+	meta_ptr->size = size;
+	meta_ptr->free = FALSE;
+	return meta_ptr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static void *get_block(t_header *header_ptr, size_t const size)
+static t_meta *find_block(t_header *header_ptr, size_t const size)
 {
 	t_meta *meta_ptr = (t_meta *)header_ptr;
 	t_meta *result = NULL;
-	void *ptr = NULL;
 
 	while (meta_ptr)
 	{
 		if (meta_ptr->free && meta_ptr->size >= size)
-		{
-			if (meta_ptr->size >= (size + sizeof(t_meta) + MEMORY_ALIGN))
-			{
-				ptr = (void *)meta_ptr;
-				ptr += (sizeof(t_meta) + size);
-				create_meta(TRUE, meta_ptr->size - (size + sizeof(t_meta)), ptr, meta_ptr->next);
-				meta_ptr->next = ptr;
-			}
-
-			meta_ptr->size = size;
-			meta_ptr->free = FALSE;
-			return (void *)meta_ptr;
-		}
+			return get_block(meta_ptr, size);
 		meta_ptr = meta_ptr->next;
 	}
 
@@ -36,7 +44,7 @@ static void *get_block(t_header *header_ptr, size_t const size)
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-void *search_page(const uint8_t allocation_type, const size_t size)
+void *search_page(uint8_t const allocation_type, size_t const size)
 {
 	t_header *header_ptr = *arena();
 	void *result = NULL;
@@ -45,8 +53,8 @@ void *search_page(const uint8_t allocation_type, const size_t size)
 	{
 		if (header_ptr->type == allocation_type)
 		{
-			if ((result = get_block(header_ptr + 1, size)))
-				return result;
+			if ((result = find_block(header_ptr + 1, size)))
+				return (void *)result;
 		}
 		header_ptr = header_ptr->next;
 	}

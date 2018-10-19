@@ -4,7 +4,7 @@
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static inline size_t get_page_size(const uint8_t alloc_type, const size_t size)
+static inline size_t get_page_size(uint8_t const alloc_type, size_t const size)
 {
 	if (alloc_type & TINY)
 		return TINY_PRE_ALLOC;
@@ -16,10 +16,8 @@ static inline size_t get_page_size(const uint8_t alloc_type, const size_t size)
 
 static void add_page(void *ptr)
 {
-	t_header *new_ptr;
+	t_header *new_ptr = (t_header *)ptr;
 	t_header *header_ptr;
-
-	new_ptr = (t_header *)ptr;
 
 	if ((header_ptr = *arena()))
 	{
@@ -35,15 +33,12 @@ static void add_page(void *ptr)
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-void *new_page(const uint8_t allocation_type, const size_t size)
+void *new_page(uint8_t const allocation_type, size_t const size)
 {
-	size_t page_size;
-	void *ptr;
-	void *result;
-	void *next;
-	size_t rest;
-
-	page_size = get_page_size(allocation_type, size);
+	size_t const page_size = get_page_size(allocation_type, size);
+	void *ptr = NULL;
+	void *result = NULL;
+	void *next = NULL;
 
 	if ((ptr = mmap(NULL, page_size, PROT_FLAG, MAP_FLAG, -1, 0)) == MAP_FAILED)
 	{
@@ -53,11 +48,10 @@ void *new_page(const uint8_t allocation_type, const size_t size)
 
 	result = ptr + sizeof(t_header);
 	next = result + (sizeof(t_meta) + size);
-	rest = page_size - (((sizeof(t_meta) * 2) + sizeof(t_header)) + size);
 
 	create_header(allocation_type, page_size, ptr);
 	create_meta(FALSE, size, result, next);
-	create_meta(TRUE, rest, next, NULL);
+	create_meta(TRUE, page_size - (((sizeof(t_meta) * 2) + sizeof(t_header)) + size), next, NULL);
 	add_page(ptr);
 
 	return result;

@@ -28,9 +28,9 @@
 #define TINY_MAX 992
 #define SMALL_MAX 15359
 
-#define TINY 0x1
-#define SMALL 0x2
-#define LARGE 0x4
+#define TINY 1
+#define SMALL 2
+#define LARGE 4
 
 #define TINY_PRE_ALLOC 30 * getpagesize()
 #define SMALL_PRE_ALLOC 400 * getpagesize()
@@ -61,11 +61,8 @@ typedef struct s_meta
 /// MALLOC
 
 void *malloc(size_t size);
-void create_meta(const uint8_t status, const size_t size, void *ptr, void *next);
-void create_header(const uint8_t allocation_type, const size_t page_size, void *ptr);
-t_header **arena(void);
-void *new_page(const uint8_t allocation_type, const size_t size);
-void *search_page(const uint8_t allocation_type, const size_t size);
+void *new_page(uint8_t const allocation_type, size_t const size);
+void *search_page(uint8_t const allocation_type, size_t const size);
 
 /// FREE
 
@@ -74,6 +71,27 @@ void free(void *ptr);
 /// REALLOC
 
 void *realloc(void *ptr, size_t size);
+
+/// CALLOC
+
 void *calloc(size_t count, size_t eltsize);
+
+/// SHOW_ALLOC_MEM
+
+void show_alloc_mem(void);
+
+/// UTILS
+
+t_header **arena(void);
+void create_meta(uint8_t const status, size_t const size, void *ptr, void *next);
+void create_header(uint8_t const allocation_type, size_t const page_size, void *ptr);
+
+/// LIB
+
+void print_num(size_t num);
+void _bzero(void *s, size_t n);
+void *_memcpy(void *dst, const void *src, size_t n);
+void print_str(char *str);
+void print_ptr(unsigned long long ptr);
 
 #endif

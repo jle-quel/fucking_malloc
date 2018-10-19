@@ -4,7 +4,7 @@
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static inline uint8_t get_allocation_type(const size_t size)
+static inline uint8_t get_allocation_type(size_t const size)
 {
 	if (size <= TINY_MAX)
 		return TINY;
