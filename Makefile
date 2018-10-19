@@ -27,6 +27,7 @@ SRC_NAME =	free.c				\
 			utils.c				\
 			new_page.c			\
 			search_page.c			\
+calloc.c	\
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 

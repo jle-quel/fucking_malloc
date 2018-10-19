@@ -73,5 +73,6 @@ void free(void *ptr);
 /// REALLOC
 
 void *realloc(void *ptr, size_t size);
+void *calloc(size_t count, size_t eltsize);
 
 #endif
