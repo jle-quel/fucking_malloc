@@ -30,6 +30,7 @@ SRC_NAME =	free.c				\
 			calloc.c			\
 			show_alloc_mem.c	\
 			lib.c				\
+			realloc.c			\
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
