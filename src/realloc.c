@@ -40,7 +40,7 @@ static void *new_malloc(void *ptr, size_t const size, size_t const original_size
 	if ((result = malloc(size)) == NULL)
 		return ptr;
 
-	memcpy(result, ptr, original_size);
+	_memcpy(result, ptr, original_size);
 	free(ptr);
 
 	return result;
@@ -86,6 +86,8 @@ void *realloc(void *ptr, size_t size)
 	}
 
 	original_size = get_original_size(ptr);
+	if (original_size == 0)
+		return (NULL);
 
 	if (original_size && size > original_size)
 		return ((result = increase_block(ptr, size, original_size))) ? result : new_malloc(ptr, size, original_size);

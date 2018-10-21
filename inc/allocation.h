@@ -24,16 +24,15 @@
 #define PROT_FLAG PROT_READ | PROT_WRITE
 #define MAP_FLAG MAP_ANON | MAP_PRIVATE
 
-#define TINY_MIN 1
-#define TINY_MAX 992
+#define TINY_MAX 512
 #define SMALL_MAX 15359
 
 #define TINY 1
 #define SMALL 2
 #define LARGE 4
 
-#define TINY_PRE_ALLOC 30 * getpagesize()
-#define SMALL_PRE_ALLOC 400 * getpagesize()
+#define TINY_PRE_ALLOC 16 * getpagesize()
+#define SMALL_PRE_ALLOC 512 * getpagesize()
 
 ////////////////////////////////////////////////////////////////////////////////
 /// STRUCTURES

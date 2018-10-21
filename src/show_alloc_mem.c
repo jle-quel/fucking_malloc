@@ -1,34 +1,19 @@
 #include "allocation.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-/// STATIC FUNCTIONS
+/// STATIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-static void print_line(t_meta const *meta_ptr)
-{
-	unsigned long long const beg = (unsigned long long const)meta_ptr;
-	unsigned long long const end = (unsigned long long const)meta_ptr->next;
-
-	print_str(meta_ptr->free ? "▹" : "▸");
-	print_str("  ");
-	print_ptr(beg);
-	print_str(" - ");
-	print_ptr(end);
-	print_str(" : ");
-	print_num(end - beg);
-	print_str(" octets\n");
-}
-
-static void print_header(t_header const *header_ptr, uint8_t const alloc_type)
+static void print_header(t_header const *header_ptr)
 {
 	char *str;
 
 	if (header_ptr == NULL)
 		return;
 
-	if (alloc_type & TINY)
+	if (header_ptr->type == TINY)
 		str = "\e[31mTINY\e[0m : ";
-	else if (alloc_type & SMALL)
+	else if (header_ptr->type == SMALL)
 		str = "\e[32mSMALL\e[0m : ";
 	else
 		str = "\e[34mLARGE\e[0m : ";
@@ -38,22 +23,22 @@ static void print_header(t_header const *header_ptr, uint8_t const alloc_type)
 	print_str("\n");
 }
 
-static size_t print_page(t_header *header_ptr)
+static void print_line(const t_meta *meta_ptr)
 {
-	t_meta *meta_ptr = (t_meta *)header_ptr;
-	size_t total = 0;
+	void *beg;
+	void *end;
 
-	while (meta_ptr)
-	{
-		if (meta_ptr->size)
-		{
-			print_line(meta_ptr);
-			total += meta_ptr->size;
-		}
-		meta_ptr = meta_ptr->next;
-	}
+	beg = (void *)meta_ptr;
+	end = (void *)meta_ptr->next;
 
-	return (total);
+	print_str(meta_ptr->free ? "▹" : "▸");
+	print_str("  ");
+	print_ptr((unsigned long long)beg);
+	print_str(" - ");
+	print_ptr((unsigned long long)end);
+	print_str(" : ");
+	print_num((unsigned long long)meta_ptr->size);
+	print_str(" octets\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,27 +47,28 @@ static size_t print_page(t_header *header_ptr)
 
 void show_alloc_mem(void)
 {
-	uint8_t alloc_type = 1;
-	t_header *header_ptr;
-	t_header *tmp;
+	t_header *header_ptr = *arena();
+	t_header *tmp = NULL;
+	t_meta *meta_ptr = NULL;
 	size_t total = 0;
 
-	if ((header_ptr = *arena()) == NULL)
-		return;
-	tmp = header_ptr;
-
-	while (alloc_type <= 4)
+	while (header_ptr)
 	{
-		if (header_ptr->type & alloc_type)
-			print_header(header_ptr, alloc_type);
-		while (header_ptr)
+		print_header(header_ptr);
+		tmp = header_ptr + 1;
+		meta_ptr = (t_meta *)tmp;
+
+		while (meta_ptr)
 		{
-			if (header_ptr->type & alloc_type)
-				total += print_page(header_ptr + 1);
-			header_ptr = header_ptr->next;
+			if (meta_ptr->next)
+			{
+				total += meta_ptr->size;
+				print_line(meta_ptr);
+			}
+			meta_ptr = meta_ptr->next;
 		}
-		header_ptr = tmp;
-		alloc_type <<= 1;
+
+		header_ptr = header_ptr->next;
 	}
 
 	print_str("\nTotal : ");
