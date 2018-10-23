@@ -1,14 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lib.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/10/23 10:49:48 by jle-quel          #+#    #+#             */
+/*   Updated: 2018/10/23 10:51:23 by jle-quel         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <allocation.h>
 
-////////////////////////////////////////////////////////////////////////////////
-/// PUBLIC FUNCTION
-////////////////////////////////////////////////////////////////////////////////
-
-void print_ptr(unsigned long long ptr)
+void	print_ptr(unsigned long long ptr)
 {
-	const char hex[16] = "0123456789abcdef";
-	char s[16];
-	int i;
+	const char	hex[16] = "0123456789abcdef";
+	char		s[16];
+	int			i;
 
 	i = 0;
 	if (ptr == 0)
@@ -23,11 +31,10 @@ void print_ptr(unsigned long long ptr)
 		write(1, (const void *)&(s[i]), 1);
 }
 
-void print_str(char *str)
+void	print_str(char *str)
 {
 	if (str == NULL)
-		return;
-
+		return ;
 	while (*str)
 	{
 		write(1, (const void *)&(*str), 1);
@@ -35,37 +42,32 @@ void print_str(char *str)
 	}
 }
 
-void *_memcpy(void *dst, const void *src, size_t n)
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	size_t index;
-	char *dest;
+	size_t	index;
+	char	*dest;
 
 	index = 0;
 	if (src == NULL)
 		return ((void *)dst);
-
 	dest = (char *)dst;
-
 	while (index < n)
 	{
 		dest[index] = ((char *)src)[index];
 		index += 1;
 	}
-
 	return ((void *)dest);
 }
 
-void _bzero(void *s, size_t n)
+void	ft_bzero(void *s, size_t n)
 {
-	char *dest;
-	size_t index;
+	char	*dest;
+	size_t	index;
 
 	if (s == NULL)
-		return;
-
+		return ;
 	dest = (char *)s;
 	index = 0;
-
 	while (index < n)
 	{
 		dest[index] = 0;
@@ -73,9 +75,9 @@ void _bzero(void *s, size_t n)
 	}
 }
 
-void print_num(size_t num)
+void	print_num(size_t num)
 {
-	char c;
+	char	c;
 
 	if (num > 9)
 	{
